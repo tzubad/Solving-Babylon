@@ -15,15 +15,23 @@ def distil_list_of_moves(list_of_moves):
     '''
     grabs a list of matrix moves and distills them to uniqe matrices
     '''
-    uniqe_losing_move_Layer1 = list_of_moves[0]
+    unique_moves = []
+    checked_moves = []
+
+
     for move in list_of_moves:
+        if move in checked_moves:
+            continue
+        else:
+            unique_moves.append(move)
+            
         for i in range(len(list_of_moves)):
             if compare(move,list_of_moves[i]):
-                continue
+                checked_moves.append(list_of_moves[i])
             else:
-                list_of_moves.append(move)
+                continue
 
-    return uniqe_losing_move_Layer1
+    return unique_moves[0]
 
 def map_game_state_to_matrix(game_state, n_of_colors,n_of_chips_per_color):
     '''

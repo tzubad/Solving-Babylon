@@ -81,7 +81,7 @@ layer_1_win = root.children[0]
 
 winning_moves = []
 losing_moves = []
-
+# extract moves by score
 for state in layer_1_win.children:
     if state.minimax_score==1:
         winning_moves.append(map_game_state_to_matrix(state, n_of_colors,n_of_chips_per_color))
@@ -96,12 +96,62 @@ uniqe_layer_2_losing_moves = distil_list_of_moves(losing_moves)
 
 
 # turn matrices to np.array
-win_moves_layer_2_np = np.array(uniqe_1st_layer_losing_moves)
-lose_moves_layer_2_np = np.array(uniqe_1st_layer_winning_moves)
+win_moves_layer_2win_np = np.array(uniqe_layer_2_winning_moves)
+lose_moves_layer_2win_np = np.array(uniqe_layer_2_losing_moves)
+
+# add nodes
+G.add_node(4, matrix=win_moves_layer_2win_np)
+G.add_node(5, matrix=lose_moves_layer_2win_np)
+
+# add edges with +-1 weights on them
+G.add_edge(2, 5, weight=-1)
+G.add_edge(2, 4, weight=1)
+
+
 
 
 # In[]: extract 2nd layer to [1] and [-1]  # score -1
-root.children[1].minimax_score # score -1
+root.children[1].minimax_score # score -1 lose condition
 layer_1_lose = root.children[1]
 
+
+winning_moves = []
+losing_moves = []
+# extract moves by score
+for state in layer_1_lose.children:
+    if state.minimax_score==1:
+        winning_moves.append(map_game_state_to_matrix(state, n_of_colors,n_of_chips_per_color))
+    elif state.minimax_score==-1:
+        losing_moves.append(map_game_state_to_matrix(state, n_of_colors,n_of_chips_per_color))
+
+
+# distil uniqe move-matrices
+
+uniqe_layer_2lose_winning_moves = distil_list_of_moves(winning_moves)
+# uniqe_layer_2lose_losing_moves = distil_list_of_moves(losing_moves)
+# no losing moves
+
+# turn matrices to np.array
+win_moves_layer_2_np = np.array(uniqe_layer_2lose_winning_moves)
+# lose_moves_layer_2_np = np.array(uniqe_layer_2lose_losing_moves)
+
+
+# add nodes
+G.add_node(6, matrix=win_moves_layer_2win_np)
+# G.add_node(7, matrix=lose_moves_layer_2win_np)
+
+# add edges with +-1 weights on them
+# G.add_edge(3, 7, weight=-1)
+G.add_edge(3, 6, weight=1)
+
+
 # %%
+# Draw the tree graph
+pos = nx.planar_layout(G)  # Positioning the nodes
+labels = {n: matrix_to_str(d['matrix']) for n, d in G.nodes(data=True)}
+
+# edge weight labels
+edge_labels = nx.get_edge_attributes(G, "weight")
+nx.draw(G, pos, with_labels=True, labels=labels, node_shape="s",  node_color="none", bbox=dict(facecolor="skyblue", edgecolor='black', boxstyle='round,pad=0.2'), font_size=7, font_color='black')
+nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=20, rotate=False, bbox=dict(facecolor="olive", edgecolor='black', boxstyle='round,pad=0.2'))
+plt.show()
