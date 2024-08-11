@@ -155,6 +155,7 @@ G.add_edge(3, 6, weight=1)
 # %%
 # Draw the tree graph
 pos = nx.nx_agraph.graphviz_layout(G, prog='dot')  # Positioning the nodes
+# pos = nx.planar_layout(G)  # Positioning the nodes
 labels = {n: matrix_to_str(d['matrix']) for n, d in G.nodes(data=True)}
 
 # edge weight labels
