@@ -15,6 +15,10 @@ def distil_list_of_moves(list_of_moves):
     '''
     grabs a list of matrix moves and distills them to uniqe matrices
     '''
+    if list_of_moves==[]:
+        return [[0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0]]
     unique_moves = []
     checked_moves = []
 

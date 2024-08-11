@@ -65,7 +65,7 @@ def matrix_to_str(matrix):
     return "\n".join([" ".join(map(str, row)) for row in matrix])
 
 # Draw the tree graph
-pos = nx.planar_layout(G)  # Positioning the nodes
+pos = nx.nx_agraph.graphviz_layout(G, prog='dot')  # Positioning the nodes
 labels = {n: matrix_to_str(d['matrix']) for n, d in G.nodes(data=True)}
 
 # edge weight labels
@@ -75,8 +75,11 @@ nx.draw_networkx_edge_labels(G, pos, edge_labels, font_size=20, rotate=False, bb
 plt.show()
 
 # In[]: extract 2nd layer to [1] and [-1]  # score 1 - win condition
-root.children[0].minimax_score # score 1
-layer_1_win = root.children[0]
+# take the first 1 score
+for child in root.children:
+    if child.minimax_score==1:
+        layer_1_win = child
+        break
 
 
 winning_moves = []
@@ -111,8 +114,12 @@ G.add_edge(2, 4, weight=1)
 
 
 # In[]: extract 2nd layer to [1] and [-1]  # score -1
-root.children[1].minimax_score # score -1 lose condition
-layer_1_lose = root.children[1]
+# take the first -1 score
+for child in root.children:
+    if child.minimax_score==-1:
+        layer_1_lose = child
+        break
+
 
 
 winning_moves = []
@@ -128,26 +135,26 @@ for state in layer_1_lose.children:
 # distil uniqe move-matrices
 
 uniqe_layer_2lose_winning_moves = distil_list_of_moves(winning_moves)
-# uniqe_layer_2lose_losing_moves = distil_list_of_moves(losing_moves)
-# no losing moves
+uniqe_layer_2lose_losing_moves = distil_list_of_moves(losing_moves)
+
 
 # turn matrices to np.array
 win_moves_layer_2_np = np.array(uniqe_layer_2lose_winning_moves)
-# lose_moves_layer_2_np = np.array(uniqe_layer_2lose_losing_moves)
+lose_moves_layer_2_np = np.array(uniqe_layer_2lose_losing_moves)
 
 
 # add nodes
 G.add_node(6, matrix=win_moves_layer_2win_np)
-# G.add_node(7, matrix=lose_moves_layer_2win_np)
+G.add_node(7, matrix=lose_moves_layer_2win_np)
 
 # add edges with +-1 weights on them
-# G.add_edge(3, 7, weight=-1)
+G.add_edge(3, 7, weight=-1)
 G.add_edge(3, 6, weight=1)
 
 
 # %%
 # Draw the tree graph
-pos = nx.planar_layout(G)  # Positioning the nodes
+pos = nx.nx_agraph.graphviz_layout(G, prog='dot')  # Positioning the nodes
 labels = {n: matrix_to_str(d['matrix']) for n, d in G.nodes(data=True)}
 
 # edge weight labels
