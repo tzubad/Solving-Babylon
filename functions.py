@@ -76,6 +76,12 @@ class GameNode:
         legal_moves = generate_legal_moves(self.state)
         if legal_moves==[]:
             self.is_terminal = True
+            if self.player=='Alice':
+                self.minimax_score = -1
+            else:
+                self.minimax_score = 1
+
+
         for move in legal_moves:
             child_node = GameNode(move, 'Bob' if self.player == 'Alice' else 'Alice', self)
             self.children.append(child_node)
@@ -102,8 +108,9 @@ def getUtility(node):
 
 def minimax(position, alpha, beta):
     if position.is_terminal==True:
-        position.minimax_score = getUtility(position)
-        return getUtility(position)
+        if position.minimax_score != getUtility(position):
+            print('wrong score')
+        return position.minimax_score
      
     if position.player=='Alice':
         maxEval = float('-inf')

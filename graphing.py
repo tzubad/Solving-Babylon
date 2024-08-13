@@ -162,10 +162,11 @@ pos = {
     "win_win_5": (-5, 0.5),
     "win_win_6": (0, 0),
     "win_win_7": (5, 0.5),
-    "lose_lose_0": (15, 0),
-    "lose_lose_1": (20, 0.5),
-    "lose_lose_2": (25, 0),
-    "lose_lose_3": (30, 0.5)
+    "lose_lose_0": (10, 0),
+    "lose_lose_1": (15, 0.5),
+    "lose_lose_2": (20, 0),
+    "lose_lose_3": (25, 0.5),
+    "lose_lose_4": (30, 0)
 }
 
 # Draw the nodes, edges, and labels
