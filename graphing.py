@@ -105,9 +105,28 @@ uniqe_layer_2lose_losing_moves = distil_list_of_moves(losing_moves)
 
 
 # turn matrices to np.array
-win_moves_layer_2lose_np = np.array(uniqe_layer_2lose_winning_moves[0])
-#lose_moves_layer_2lose_np = np.array(uniqe_layer_2lose_losing_moves)
+# win_moves_layer_2lose_np = np.array(uniqe_layer_2lose_winning_moves)
 # there are 4
+lose_moves_layer_2lose_np = np.array(uniqe_layer_2lose_losing_moves)
+
+# %% lose lose layer
+lose_lose_layer = layer_1_lose.children[2]
+
+winning_moves = []
+losing_moves = []
+# extract moves by score
+for state in lose_lose_layer.children:
+    if state.minimax_score==1:
+        winning_moves.append(map_game_state_to_matrix(state, n_of_colors,n_of_chips_per_color))
+    elif state.minimax_score==-1:
+        losing_moves.append(map_game_state_to_matrix(state, n_of_colors,n_of_chips_per_color))
+
+
+# distil uniqe move-matrices
+
+uniqe_lose_lose_layer_winning_moves = distil_list_of_moves(winning_moves)
+
+uniqe_lose_lose_layer_losing_moves = distil_list_of_moves(losing_moves)
 
 
 # %%
@@ -118,8 +137,15 @@ G = nx.DiGraph()
 G.add_node("start", matrix=start_state_matrix)
 G.add_node("win", matrix=win_moves_1stlayer_np)
 G.add_node("lose", matrix=lose_moves_1stlayer_np)
-G.add_node("win_lose", matrix=lose_moves_layer_2win_np)
-G.add_node("lose_win", matrix=win_moves_layer_2lose_np)
+# G.add_node("win_lose", matrix=lose_moves_layer_2win_np)
+# G.add_node("lose_win", matrix=win_moves_layer_2lose_np)
+
+for i, move in enumerate(uniqe_layer_2lose_winning_moves):
+    move_name = "lose_win_"+str(i)
+    G.add_node(move_name, matrix=np.array(move))
+    G.add_edge("lose", move_name, weight=1)
+
+
 
 for i, move in enumerate(uniqe_layer_2lose_losing_moves):
     move_name = "lose_lose_"+str(i)
@@ -131,18 +157,35 @@ for i, move in enumerate(uniqe_layer_2_winning_moves):
     G.add_node(move_name, matrix=np.array(move))
     G.add_edge("win", move_name, weight=1)
 
+# for i, move in enumerate(uniqe_lose_lose_layer_losing_moves):
+#     move_name = "lose_lose_lose_"+str(i)
+#     G.add_node(move_name, matrix=np.array(move))
+#     G.add_edge("lose_lose_0", move_name, weight=-1)
 
 # add edges with +-1 weights on them
 G.add_edge("start", "win", weight=1)
 G.add_edge("start", "lose", weight=-1)
-G.add_edge("win", "win_lose", weight=-1)
-G.add_edge("lose", "lose_win", weight=1)
+# G.add_edge("win", "win_lose", weight=-1)
+# G.add_edge("lose", "lose_win", weight=1)
 
 
 # Define edges to create the tree structure
-G.add_edges_from([("start", "win"), ("start", "lose"),
-                  ("win", "win_win_0"),("win", "win_win_1"),("win", "win_win_2"), ("win", "win_win_3"),("win", "win_win_4"),("win", "win_win_5"),("win", "win_win_6"),("win", "win_win_7"),
-                  ("lose", "lose_win"), ("lose", "lose_lose_0"), ("lose", "lose_lose_1"), ("lose", "lose_lose_2"), ("lose", "lose_lose_3")])
+G.add_edges_from([("start", "win"), 
+                  ("start", "lose"),
+                  ("win", "win_win_0"),
+                  ("win", "win_win_1"),
+                  ("win", "win_win_2"),
+                  ("win", "win_win_3"), 
+                  ("win", "win_win_4"),
+                  ("win", "win_win_5"),
+                  ("win", "win_win_6"),
+                  ("win", "win_win_7"),
+                  ("lose", "lose_win_0"), 
+                  ("lose", "lose_lose_0"), 
+                  ("lose", "lose_win_1"), 
+                  ("lose", "lose_win_2") 
+                  ,("lose", "lose_win_3")
+                  ])
 
 # Define positions for the nodes
 pos = {
@@ -152,21 +195,22 @@ pos = {
     "lose": (15, 1.5),
 
     "win_lose": (-30, 1),
-    "lose_win": (30, 1),
+    "lose_win_0": (5, 0.75),
 
-    "win_win_0": (-30, 0),
-    "win_win_1": (-25, 0.5),
-    "win_win_2": (-20, 0),
-    "win_win_3": (-15, 0.5),
-    "win_win_4": (-10, 0),
-    "win_win_5": (-5, 0.5),
-    "win_win_6": (0, 0),
-    "win_win_7": (5, 0.5),
-    "lose_lose_0": (10, 0),
-    "lose_lose_1": (15, 0.5),
-    "lose_lose_2": (20, 0),
-    "lose_lose_3": (25, 0.5),
-    "lose_lose_4": (30, 0)
+    "win_win_0": (-5, 0.75),
+    "win_win_1": (-15, 0.75),
+    "win_win_2": (-20, 0.5),
+    "win_win_3": (-25, 0.75),
+    "win_win_4": (-10, 0.5),
+    "win_win_5": (0, 0.5),
+    "win_win_6": (-30, 0.5),
+    "win_win_7": (5, 0.75),
+    "lose_lose_0": (25, 0.60)
+    ,"lose_win_1": (-5, 0.75),
+    "lose_win_2": (-15, 0.75)
+    ,"lose_win_3": (0, 0.5)
+    ,"lose_lose_lose_0":(10,0)
+    ,"lose_lose_lose_1":(20,0)
 }
 
 # Draw the nodes, edges, and labels

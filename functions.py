@@ -51,7 +51,7 @@ def generate_legal_moves(state):
                 
                 moves.append(new_state)
                 
-    moves = list(set(tuple(i) for i in moves))
+    moves = list(set(tuple(i) for i in moves)) # remove simple symmetries
     moves = [list(tup) for tup in moves] # why tuples? for comparing
     return moves
 
@@ -76,10 +76,6 @@ class GameNode:
         legal_moves = generate_legal_moves(self.state)
         if legal_moves==[]:
             self.is_terminal = True
-            if self.player=='Alice':
-                self.minimax_score = -1
-            else:
-                self.minimax_score = 1
 
 
         for move in legal_moves:
@@ -105,34 +101,59 @@ def getUtility(node):
 
 
 
-
-def minimax(position, alpha, beta):
-    if position.is_terminal==True:
-        if position.minimax_score != getUtility(position):
-            print('wrong score')
+def minimax(position,alpha,beta):
+    '''
+    not really alpha beta pruning because we need to all nodes to have scores
+    '''
+    if position.is_terminal == True:
+        position.minimax_score = getUtility(position)
         return position.minimax_score
-     
-    if position.player=='Alice':
+
+    if position.player == 'Alice':
         maxEval = float('-inf')
         for child in position.children:
-            eval = minimax(child, alpha, beta)
-            # child.minimax_score = eval
+            eval = minimax(child,alpha,beta)
             maxEval = max(maxEval, eval)
             position.minimax_score = maxEval
-            alpha = max(alpha, eval)
-            if beta <= alpha:
-                break
         return maxEval
     
     else:
         minEval = float('inf')
         for child in position.children:
-            eval = minimax(child, alpha, beta)
-            # child.minimax_score = eval
+            eval = minimax(child,alpha,beta)
             minEval = min(minEval, eval)
             position.minimax_score = minEval
-            beta = min(beta, eval)
-            if beta <= alpha:
-                break
         return minEval
+    
+# def minimax(position, alpha, beta):
+# '''
+# honest to god alpha beta pruning
+# '''
+#     if position.is_terminal==True:
+#         position.minimax_score = getUtility(position)
+#         return position.minimax_score
+     
+#     if position.player=='Alice':
+#         maxEval = float('-inf')
+#         for child in position.children:
+#             eval = minimax(child, alpha, beta)
+#             # child.minimax_score = eval
+#             maxEval = max(maxEval, eval)
+#             position.minimax_score = maxEval
+#             alpha = max(alpha, eval)
+#             if beta <= alpha:
+#                 break
+#         return maxEval
+    
+#     else:
+#         minEval = float('inf')
+#         for child in position.children:
+#             eval = minimax(child, alpha, beta)
+#             # child.minimax_score = eval
+#             minEval = min(minEval, eval)
+#             position.minimax_score = minEval
+#             beta = min(beta, eval)
+#             if beta <= alpha:
+#                 break
+#         return minEval
  
